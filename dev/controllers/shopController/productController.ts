@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 
+
 import { Product } from "../../models/productModel";
 
 export const getProducts = (_: Request, res: Response) => {
@@ -18,7 +19,7 @@ export const getProducts = (_: Request, res: Response) => {
 
 export const getCart = (_: Request, res: Response) => {
   // res.sendFile(path.join(rootDir, "..", "views", "shop.html"));
-  console.log(_.body);
+  console.log("dasda");
 
   res.render("shop/cart", {
     pageTitle: "Cart",
@@ -27,6 +28,16 @@ export const getCart = (_: Request, res: Response) => {
     productCSS: true,
   });
 };
+
+// export const postCart = (req: Request, res: Response) => {
+//   console.log("dsada");
+  
+//   const prodId = req.body.productId;
+//   Product.findById(prodId, (product: Product) => {
+//     Cart.addProduct(prodId, product.price);
+//   });
+//   res.redirect("/cart");
+// };
 
 export const getorders = (_: Request, res: Response) => {
   // res.sendFile(path.join(rootDir, "..", "views", "shop.html"));
@@ -83,6 +94,8 @@ exports.getProductDetails = (req: Request, res: Response) => {
     });
   });
 };
+
+
 
 // res.sendFile(path.join(rootDir, "..", "views", "shop.html"));
 
