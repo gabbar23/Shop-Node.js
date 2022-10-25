@@ -7,7 +7,7 @@ export const getAddProduct = (_: Request, res: Response) => {
   res.render("admin/edit-product", {
     pageTitle: "Add Product",
     path: "/admin/add-product",
-    editing:false
+    editing: false,
   });
 };
 
@@ -23,20 +23,21 @@ export const postAddProduct = (req: Request, res: Response) => {
   res.redirect("/product-list");
 };
 
-export const editPostProduct = (req: Request, res: Response) => {
+export const postEditProduct = (req: Request, res: Response) => {
   const title = req.body.title;
   const imageUrl = req.body.imageUrl;
   const price = req.body.price;
   const description = req.body.description;
-  const product = new Product(title, imageUrl, description, price);
-  product.save();
+  const id = req.body.id;
+
+  const product = new Product(title, imageUrl, description, price, id);
+  product.save(id);
 
   // products.push({ title: req.body.title });
   res.redirect("/product-list");
 };
 
-
-export const editProduct = (req: Request, res: Response) => {
+export const getEditProduct = (req: Request, res: Response) => {
   const editMode = req.query.edit;
   console.log(editMode);
   if (!editMode) res.redirect("/");
@@ -52,6 +53,14 @@ export const editProduct = (req: Request, res: Response) => {
       product: product,
     });
   });
+};
+
+export const postDeleteProduct = (req: Request, res: Response) => {
+  const id = req.body.id;
+  Product.delete(id);
+  console.log(id);
+
+  res.redirect("/");
 };
 
 export const productListAdmin = (_: Request, res: Response) => {
