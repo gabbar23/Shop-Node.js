@@ -4,9 +4,13 @@ import bodyParser from "body-parser";
 import path from "path";
 import rootDir from "./util/path";
 
+
 import * as adminRoutes from "./routes/adminRoutes/adminProducts-route";
 import * as shopRoutes from "./routes/shop/shopProductList-route";
 import * as routes404 from "./routes/404";
+
+
+
 
 const app = express();
 app.set("view engine", "ejs");

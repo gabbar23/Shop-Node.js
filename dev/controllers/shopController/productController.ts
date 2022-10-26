@@ -1,21 +1,34 @@
 import { Request, Response } from "express";
 
-
 import { Product } from "../../models/productModel";
 
 export const getProducts = (_: Request, res: Response) => {
-  // res.sendFile(path.join(rootDir, "..", "views", "shop.html"));
-  Product.fetchAll((products: []) => {
-    res.render("shop/product-list", {
-      prods: products,
-      pageTitle: "Products",
-      path: "shop/product-list",
-      hasProducts: products.length > 0,
-      activeShop: true,
-      productCSS: true,
-    });
-  });
+  Product.fetchAll()
+    .then((prods) => {
+      res.render("shop/product-list", {
+            prods: prods.rows,
+            pageTitle: "Products",
+            path: "shop/product-list",
+            hasProducts: prods.rows.length > 0,
+            activeShop: true,
+            productCSS: true,
+          });
+      console.log(prods.rows)})
+    .catch((err) => console.log(err));
 };
+
+// export const getProducts = (_: Request, res: Response) => {
+//   // res.sendFile(path.join(rootDir, "..", "views", "shop.html"));
+//   const products=Product.fetchAll().then().catch(err=>cos);
+//   res.render("shop/product-list", {
+//     prods: products,
+//     pageTitle: "Products",
+//     path: "shop/product-list",
+//     hasProducts: products.length > 0,
+//     activeShop: true,
+//     productCSS: true,
+//   });
+// };
 
 export const getCart = (_: Request, res: Response) => {
   // res.sendFile(path.join(rootDir, "..", "views", "shop.html"));
@@ -31,7 +44,7 @@ export const getCart = (_: Request, res: Response) => {
 
 // export const postCart = (req: Request, res: Response) => {
 //   console.log("dsada");
-  
+
 //   const prodId = req.body.productId;
 //   Product.findById(prodId, (product: Product) => {
 //     Cart.addProduct(prodId, product.price);
@@ -72,30 +85,28 @@ export const getIndex = (_: Request, res: Response) => {
   });
 };
 
-export const getProductDetails = (req: Request, res: Response) => {
-  const productId = req.params.id;
-  Product.findById(productId, (product: any) => {
-    console.log(product);
+// export const getProductDetails = (req: Request, res: Response) => {
+//   const productId = req.params.id;
+//   Product.findById(productId, (product: any) => {
+//     console.log(product);
 
-    res.render("shop/product-detail", {
-      product: product,
-      pageTitle: "Product Details",
-      path: "shop/product-details",
-    });
-  });
-};
-exports.getProductDetails = (req: Request, res: Response) => {
-  const prodId = req.params.productId;
-  Product.findById(prodId, (product: Product) => {
-    res.render("shop/product-detail", {
-      product: product,
-      pageTitle: product.title,
-      path: "/products",
-    });
-  });
-};
-
-
+//     res.render("shop/product-detail", {
+//       product: product,
+//       pageTitle: "Product Details",
+//       path: "shop/product-details",
+//     });
+//   });
+// };
+// exports.getProductDetails = (req: Request, res: Response) => {
+//   const prodId = req.params.productId;
+//   Product.findById(prodId, (product: Product) => {
+//     res.render("shop/product-detail", {
+//       product: product,
+//       pageTitle: product.title,
+//       path: "/products",
+//     });
+//   });
+// };
 
 // res.sendFile(path.join(rootDir, "..", "views", "shop.html"));
 
