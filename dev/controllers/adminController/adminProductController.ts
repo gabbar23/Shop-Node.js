@@ -15,13 +15,14 @@ export const postAddProduct = (req: Request, res: Response) => {
   const imageUrl = req.body.imageUrl;
   const price = req.body.price;
   const description = req.body.description;
-  const product = new Product(title, imageUrl, description, price);
-  product
-    .save()
-    .then(() => res.redirect("/product-list"))
-    .catch((err) => {
-      console.log(err);
-    });
+  Product.create({
+    title: title,
+    price: price,
+    imageUrl: imageUrl,
+    description: description,
+  }).then(() => {
+    res.redirect("/product-list");
+  });
 };
 
 export const postEditProduct = (req: Request, res: Response) => {
@@ -30,44 +31,57 @@ export const postEditProduct = (req: Request, res: Response) => {
   const price: number = +req.body.price;
   const description: string = req.body.description;
   const id = req.body.id;
+  Product.update(
+    {
+      title: title,
+      imageUrl: imageUrl,
+      description: description,
+      price: price,
+    },
+    {
+      where: {
+        id: id,
+      },
+    }
+  )
 
-  const product = new Product(title, imageUrl, description, price);
-  product
-    .saveEdited(+id)
     .then(() => res.redirect("/product-list"))
     .catch((err) => console.log(err));
 };
 
 export const getEditProduct = (req: Request, res: Response) => {
   const editMode = req.query.edit;
-  console.log(editMode);
   if (!editMode) res.redirect("/");
   const productId = req.params.productId;
-  Product.findById(productId).then((product) => {
+  Product.findByPk(productId).then((product) => {
     res.render("admin/edit-product", {
       pageTitle: "Edit Product",
       path: "/admin/edit-product",
       editing: editMode,
-      product: product.rows[0],
+      product: product,
     });
   });
 };
 
 export const postDeleteProduct = (req: Request, res: Response) => {
   const id = req.body.id;
-  Product.delete(id)
+  Product.destroy({
+    where: {
+      id: id,
+    },
+  })
     .then(() => res.redirect("product-list-admin"))
     .catch((err) => console.log(err));
 };
 
 export const productListAdmin = (_: Request, res: Response) => {
-  Product.fetchAll()
-    .then((prods) => {
+  Product.findAll()
+    .then((products) => {
       res.render("admin/product-list-admin", {
-        prods: prods.rows,
+        prods: products,
         pageTitle: "Admin Products",
         path: "/admin/product-list-admin",
-        hasProducts: prods.rows.length > 0,
+        hasProducts: products.length > 0,
         activeShop: true,
         productCSS: true,
       });

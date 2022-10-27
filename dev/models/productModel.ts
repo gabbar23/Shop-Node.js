@@ -1,61 +1,89 @@
-import { client } from "../util/database";
+import { sequelize } from "../util/database";
+import {  DataTypes } from "sequelize";
 
-export class Product {
-  title: string;
-  imageUrl: string;
-  description: string;
-  price: number;
+const Product = sequelize.define("product", {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    allowNull: false,
+    primaryKey: true,
+  },
+  title: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  price: {
+    type: DataTypes.DOUBLE,
+    allowNull: false,
+  },
+  imageUrl: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+  },
+  description: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+  },
+});
 
-  constructor(
-    title: string,
-    imageUrl: string,
-    description: string,
-    price: number
-  ) {
-    this.title = title;
-    this.imageUrl = imageUrl;
-    this.description = description;
-    this.price = price;
-  }
+export {Product}
+// import { client } from "../util/database";
 
-  save() {
-    const query = {
-      text: `INSERT INTO public.products(
-         title, price, description, "imageUrl")
-        VALUES ($1, $2, $3, $4);`,
-      values: [this.title,this.price,this.description,this.imageUrl],
-    };
-    return client.query(query);
-  }
+// export class Product {
+//   title: string;
+//   imageUrl: string;
+//   description: string;
+//   price: number;
 
-  saveEdited(id:number){    
-    const query = {
-      text: `UPDATE "products" 
-      SET "title" = $1, "price" = $2 ,"description"=$3,"imageUrl"=$4
-      WHERE "id" = $5`,
-      values: [this.title,this.price,this.description,this.imageUrl,id],
-    };
-    return client.query(query);
-  }
+//   constructor(
+//     title: string,
+//     imageUrl: string,
+//     description: string,
+//     price: number
+//   ) {
+//     this.title = title;
+//     this.imageUrl = imageUrl;
+//     this.description = description;
+//     this.price = price;
+//   }
 
-  static findById(id: string) {
-    const query = {
-      text: "SELECT * FROM products WHERE id=$1",
-      values: [id],
-    };
-    return client.query(query);
-  }
+//   save() {
+//     const query = {
+//       text: `INSERT INTO public.products(
+//          title, price, description, "imageUrl")
+//         VALUES ($1, $2, $3, $4);`,
+//       values: [this.title,this.price,this.description,this.imageUrl],
+//     };
+//     return client.query(query);
+//   }
 
+//   saveEdited(id:number){
+//     const query = {
+//       text: `UPDATE "products"
+//       SET "title" = $1, "price" = $2 ,"description"=$3,"imageUrl"=$4
+//       WHERE "id" = $5`,
+//       values: [this.title,this.price,this.description,this.imageUrl,id],
+//     };
+//     return client.query(query);
+//   }
 
-  static delete(id: string) {
-    const query = {
-      text: `DELETE FROM "products" WHERE "id" = $1`,
-      values: [id],
-    };
-    return client.query(query);
-  }
+//   static findById(id: string) {
+//     const query = {
+//       text: "SELECT * FROM products WHERE id=$1",
+//       values: [id],
+//     };
+//     return client.query(query);
+//   }
 
-  static fetchAll() {
-    return client.query("SELECT * FROM products");
-  }
-}
+//   static delete(id: string) {
+//     const query = {
+//       text: `DELETE FROM "products" WHERE "id" = $1`,
+//       values: [id],
+//     };
+//     return client.query(query);
+//   }
+
+//   static fetchAll() {
+//     return client.query("SELECT * FROM products");
+//   }
+// }

@@ -3,13 +3,14 @@ import { Request, Response } from "express";
 import { Product } from "../../models/productModel";
 
 export const getProducts = (_: Request, res: Response) => {
-  Product.fetchAll()
-    .then((prods) => {
+  Product.findAll()
+    .then((products) => {
+      
       res.render("shop/product-list", {
-        prods: prods.rows,
+        prods: products,
         pageTitle: "Products",
         path: "shop/product-list",
-        hasProducts: prods.rows.length > 0,
+        hasProducts: products.length > 0,
         activeShop: true,
         productCSS: true,
       });
@@ -19,7 +20,7 @@ export const getProducts = (_: Request, res: Response) => {
 
 export const getCart = (_: Request, res: Response) => {
   // res.sendFile(path.join(rootDir, "..", "views", "shop.html"));
-  console.log("dasda");
+
 
   res.render("shop/cart", {
     pageTitle: "Cart",
@@ -75,14 +76,15 @@ export const getIndex = (_: Request, res: Response) => {
 export const getProductDetails = (req: Request, res: Response) => {
   const productId = req.params.productId;
   
-  Product.findById(productId)
+  Product.findByPk(productId)
     .then((product) => {
 
       res.render("shop/product-detail", {
-        product: product.rows[0],
+        product: product,
         pageTitle: "Product Details",
         path: "shop/product-details",
       });
+      
     })
     .catch((err) => console.log(err));
 };
