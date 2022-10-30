@@ -5,7 +5,6 @@ import { Product } from "../../models/productModel";
 export const getProducts = (_: Request, res: Response) => {
   Product.findAll()
     .then((products) => {
-      
       res.render("shop/product-list", {
         prods: products,
         pageTitle: "Products",
@@ -18,27 +17,31 @@ export const getProducts = (_: Request, res: Response) => {
     .catch((err) => console.log(err));
 };
 
-export const getCart = (_: Request, res: Response) => {
+export const getCart = (req: Request, res: Response) => {
   // res.sendFile(path.join(rootDir, "..", "views", "shop.html"));
-
-
-  res.render("shop/cart", {
-    pageTitle: "Cart",
-    path: "shop/cart",
-    activeShop: true,
-    productCSS: true,
+  req.user.getCart().then((cart: any) => {
+    cart
+      .getProducts()
+      .then((_: any) => { 
+        res.render("shop/cart", {
+          pageTitle: "Cart",
+          path: "shop/cart",
+          activeShop: true,
+          productCSS: true,
+        });
+      })
+      .catch((err: any) => console.log(err));
   });
 };
 
-// export const postCart = (req: Request, res: Response) => {
-//   console.log("dsada");
-
-//   const prodId = req.body.productId;
-//   Product.findById(prodId, (product: Product) => {
-//     Cart.addProduct(prodId, product.price);
-//   });
-//   res.redirect("/cart");
-// };
+export const postCart = (req: Request, res: Response) => {
+  
+  const prodId = req.body.productId;
+  Product.findById(prodId, (product: Product) => {
+    Cart.addProduct(prodId, product.price);
+  });
+  res.redirect("/cart");
+};
 
 export const getorders = (_: Request, res: Response) => {
   // res.sendFile(path.join(rootDir, "..", "views", "shop.html"));
@@ -75,17 +78,14 @@ export const getIndex = (_: Request, res: Response) => {
 
 export const getProductDetails = (req: Request, res: Response) => {
   const productId = req.params.productId;
-  
+
   Product.findByPk(productId)
     .then((product) => {
-
       res.render("shop/product-detail", {
         product: product,
         pageTitle: "Product Details",
         path: "shop/product-details",
       });
-      
     })
     .catch((err) => console.log(err));
 };
-
