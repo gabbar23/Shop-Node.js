@@ -8,6 +8,9 @@ import rootDir from "./util/path";
 import { sequelize } from "./util/database";
 import { Product } from "./models/productModel";
 import { User } from "./models/user";
+import { Order } from "./models/order";
+import { OrderItem } from "./models/orderItem";
+
 
 import * as adminRoutes from "./routes/adminRoutes/adminProducts-route";
 import * as shopRoutes from "./routes/shop/shopProductList-route";
@@ -42,10 +45,14 @@ User.hasOne(Cart);
 Cart.belongsTo(User);
 Cart.belongsToMany(Product, { through: CartItem });
 Product.belongsToMany(Cart, { through: CartItem });
+Order.belongsTo(User);
+User.hasMany(Order);
+Order.belongsToMany(Product,{through:OrderItem});
 
 sequelize
   // .sync({ force: true })
   .sync()
+
   .then((_) => {
     return User.findByPk(2);
     // console.log(result);
@@ -55,7 +62,7 @@ sequelize
       return User.create({ username: "Aman", password: "123" });
     }
     return user;
-  })
+  }).then((user:any)=>user.createCart())
   .then((_) => {
     // console.log(user);
     app.listen(3000);

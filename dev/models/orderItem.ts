@@ -3,7 +3,7 @@ import {  DataTypes } from "sequelize";
 
 
 
-const CartItem=sequelize.define('cartItem', {
+const OrderItem=sequelize.define('OrderItem', {
     id:{
         type:DataTypes.INTEGER,
         autoIncrement:true,
@@ -12,9 +12,8 @@ const CartItem=sequelize.define('cartItem', {
        
     },
     quantity:{
-        type:DataTypes.INTEGER,
-        allowNull:false,
+        type:DataTypes.INTEGER
     }
 })
 
-export {CartItem}
+export {OrderItem}
