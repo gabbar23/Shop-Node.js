@@ -1,32 +1,88 @@
-import { sequelize } from "../util/database";
-import {  DataTypes } from "sequelize";
+import { ObjectId } from "mongodb";
+import { getDb } from "../util/database";
 
-const Product = sequelize.define("product", {
-  id: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
-    allowNull: false,
-    primaryKey: true,
-  },
-  title: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  price: {
-    type: DataTypes.DOUBLE,
-    allowNull: false,
-  },
-  imageUrl: {
-    type: DataTypes.TEXT,
-    allowNull: false,
-  },
-  description: {
-    type: DataTypes.TEXT,
-    allowNull: true,
-  },
-});
+export class Product {
+  //   id: number;
+  title: string;
+  price: number;
+  imageUrl: string;
+  description: string;
 
-export {Product}
+  constructor(
+    // id: number,
+    title: string,
+    price: number,
+    imageUrl: string,
+    description: string
+  ) {
+    // this.id = id;
+    this.title = title;
+    this.price = price;
+    this.imageUrl = imageUrl;
+    this.description = description;
+  }
+
+  save() {
+    const db = getDb();
+    return db
+      .collection("products")
+      .insertOne(this)
+      .then((products: any) => console.log(products))
+      .catch((error: any) => console.log(error));
+  }
+
+  static fetchAllProducts() {
+    const db = getDb();
+    return db
+      .collection("products")
+      .find()
+      .toArray()
+      .then((products: any) => {
+        console.log(products);
+        return products;
+      })
+      .catch((error: any) => console.log(error));
+  }
+
+  static fetchSingleProduct(id: string) {
+    const db = getDb();
+    return db
+      .collection("products")
+      .find({ _id: new ObjectId(id) })
+      .toArray()
+      .then((products: any) => {
+        return products;
+      })
+      .catch((error: any) => console.log(error));
+  }
+}
+
+// const Product = sequelize.define("product", {
+//   id: {
+//     type: DataTypes.INTEGER,
+//     autoIncrement: true,
+//     allowNull: false,
+//     primaryKey: true,
+//   },
+//   title: {
+//     type: DataTypes.STRING,
+//     allowNull: false,
+//   },
+//   price: {
+//     type: DataTypes.DOUBLE,
+//     allowNull: false,
+//   },
+//   imageUrl: {
+//     type: DataTypes.TEXT,
+//     allowNull: false,
+//   },
+//   description: {
+//     type: DataTypes.TEXT,
+//     allowNull: true,
+//   },
+// });
+
+// export {Product}
 // import { client } from "../util/database";
 
 // export class Product {
