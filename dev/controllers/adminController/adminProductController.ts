@@ -28,35 +28,25 @@ export const postAddProduct = (req: Request, _: Response) => {
   //   });
 };
 
-// export const postEditProduct = (req: Request, res: Response) => {
-//   const title: string = req.body.title;
-//   const imageUrl: string = req.body.imageUrl;
-//   const price: number = +req.body.price;
-//   const description: string = req.body.description;
-//   const id = req.body.id;
-//   Product.update(
-//     {
-//       title: title,
-//       imageUrl: imageUrl,
-//       description: description,
-//       price: price,
-//     },
-//     {
-//       where: {
-//         id: id,
-//       },
-//     }
-//   )
-
-//     .then(() => res.redirect("/product-list"))
-//     .catch((err: any) => console.log(err));
-// };
+export const postEditProduct = (req: Request, res: Response) => {
+  const title: string = req.body.title;
+  const imageUrl: string = req.body.imageUrl;
+  const price: number = +req.body.price;
+  const description: string = req.body.description;
+  const id = req.body.id;
+  Product.update(id, title, price, imageUrl, description)
+    .then((products: any) => {
+      res.redirect("/product-list"); 
+    console.log(products)}
+    )
+    .catch((err: any) => console.log(err));
+};
 
 export const getEditProduct = (req: Request, res: Response) => {
   const editMode = req.query.edit;
   if (!editMode) res.redirect("/");
   const productId = req.params.productId;
-  req.user.getProducts({ where: { id: productId } }).then((products: any) => {
+  Product.fetchSingleProduct(productId).then((products: any) => {
     res.render("admin/edit-product", {
       pageTitle: "Edit Product",
       path: "/admin/edit-product",
