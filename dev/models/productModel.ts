@@ -1,5 +1,9 @@
-import { ObjectId } from "mongodb";
-import { getDb } from "../util/database";
+import {
+  ObjectId
+} from "mongodb";
+import {
+  getDb
+} from "../util/database";
 
 export class Product {
   //   id: number;
@@ -7,23 +11,29 @@ export class Product {
   price: number;
   imageUrl: string;
   description: string;
+  _id: ObjectId;
 
   constructor(
     // id: number,
     title: string,
     price: number,
     imageUrl: string,
-    description: string
+    description: string,
+    id:ObjectId
   ) {
     // this.id = id;
     this.title = title;
     this.price = price;
     this.imageUrl = imageUrl;
     this.description = description;
+    this._id=id;
   }
 
   save() {
     const db = getDb();
+    if(this._id){
+      
+    }
     return db
       .collection("products")
       .insertOne(this)
@@ -48,98 +58,126 @@ export class Product {
     const db = getDb();
     return db
       .collection("products")
-      .find({ _id: new ObjectId(id) })
+      .find({
+        _id: new ObjectId(id)
+      })
       .toArray()
       .then((products: any) => {
         return products;
       })
       .catch((error: any) => console.log(error));
   }
+
+  static update(
+    id: ObjectId,
+    title: string,
+    price: number,
+    imageUrl: string,
+    description: string
+  ) {
+    const db = getDb();
+    const filter = {
+      _id: new ObjectId(id)
+    };
+
+    const updateDoc = {
+      $set: {
+        title: title,
+        imageUrl: imageUrl,
+        price: +price,
+        description: description,
+      }
+    };
+    return db
+      .collection("products")
+      .updateOne(filter, updateDoc);
+
+  }
 }
 
-// const Product = sequelize.define("product", {
-//   id: {
-//     type: DataTypes.INTEGER,
-//     autoIncrement: true,
-//     allowNull: false,
-//     primaryKey: true,
-//   },
-//   title: {
-//     type: DataTypes.STRING,
-//     allowNull: false,
-//   },
-//   price: {
-//     type: DataTypes.DOUBLE,
-//     allowNull: false,
-//   },
-//   imageUrl: {
-//     type: DataTypes.TEXT,
-//     allowNull: false,
-//   },
-//   description: {
-//     type: DataTypes.TEXT,
-//     allowNull: true,
-//   },
-// });
+  // const Product = sequelize.define("product", {
+  //   id: {
+  //     type: DataTypes.INTEGER,
+  //     autoIncrement: true,
+  //     allowNull: false,
+  //     primaryKey: true,
+  //   },
+  //   title: {
+  //     type: DataTypes.STRING,
+  //     allowNull: false,
+  //   },
+  //   price: {
+  //     type: DataTypes.DOUBLE,
+  //     allowNull: false,
+  //   },
+  //   imageUrl: {
+  //     type: DataTypes.TEXT,
+  //     allowNull: false,
+  //   },
+  //   description: {
+  //     type: DataTypes.TEXT,
+  //     allowNull: true,
+  //   },
+  // });
 
-// export {Product}
-// import { client } from "../util/database";
+  // export {Product}
+  // import { client } from "../util/database";
 
-// export class Product {
-//   title: string;
-//   imageUrl: string;
-//   description: string;
-//   price: number;
+  // export class Product {
+  //   title: string;
+  //   imageUrl: string;
+  //   description: string;
+  //   price: number;
 
-//   constructor(
-//     title: string,
-//     imageUrl: string,
-//     description: string,
-//     price: number
-//   ) {
-//     this.title = title;
-//     this.imageUrl = imageUrl;
-//     this.description = description;
-//     this.price = price;
-//   }
+  //   constructor(
+  //     title: string,
+  //     imageUrl: string,
+  //     description: string,
+  //     price: number
+  //   ) {
+  //     this.title = title;
+  //     this.imageUrl = imageUrl;
+  //     this.description = description;
+  //     this.price = price;
+  //   }
 
-//   save() {
-//     const query = {
-//       text: `INSERT INTO public.products(
-//          title, price, description, "imageUrl")
-//         VALUES ($1, $2, $3, $4);`,
-//       values: [this.title,this.price,this.description,this.imageUrl],
-//     };
-//     return client.query(query);
-//   }
+  //   save() {
+  //     const query = {
+  //       text: `INSERT INTO public.products(
+  //          title, price, description, "imageUrl")
+  //         VALUES ($1, $2, $3, $4);`,
+  //       values: [this.title,this.price,this.description,this.imageUrl],
+  //     };
+  //     return client.query(query);
+  //   }
 
-//   saveEdited(id:number){
-//     const query = {
-//       text: `UPDATE "products"
-//       SET "title" = $1, "price" = $2 ,"description"=$3,"imageUrl"=$4
-//       WHERE "id" = $5`,
-//       values: [this.title,this.price,this.description,this.imageUrl,id],
-//     };
-//     return client.query(query);
-//   }
+  //   saveEdited(id:number){
+  //     const query = {
+  //       text: `UPDATE "products"
+  //       SET "title" = $1, "price" = $2 ,"description"=$3,"imageUrl"=$4
+  //       WHERE "id" = $5`,
+  //       values: [this.title,this.price,this.description,this.imageUrl,id],
+  //     };
+  //     return client.query(query);
+  //   }
 
-//   static findById(id: string) {
-//     const query = {
-//       text: "SELECT * FROM products WHERE id=$1",
-//       values: [id],
-//     };
-//     return client.query(query);
-//   }
+  //   static findById(id: string) {
+  //     const query = {
+  //       text: "SELECT * FROM products WHERE id=$1",
+  //       values: [id],
+  //     };
+  //     return client.query(query);
+  //   }
 
-//   static delete(id: string) {
-//     const query = {
-//       text: `DELETE FROM "products" WHERE "id" = $1`,
-//       values: [id],
-//     };
-//     return client.query(query);
-//   }
+  //   static delete(id: string) {
+  //     const query = {
+  //       text: `DELETE FROM "products" WHERE "id" = $1`,
+  //       values: [id],
+  //     };
+  //     return client.query(query);
+  //   }
 
-//   static fetchAll() {
-//     return client.query("SELECT * FROM products");
-//   }
-// }
+  //   static fetchAll() {
+  //     return client.query("SELECT * FROM products");
+  //   }
+  // }
