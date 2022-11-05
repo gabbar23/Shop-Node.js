@@ -19,6 +19,6 @@ router.get("/product-list", shopController.getProducts);
 
 router.get("/product-detail/:productId", shopController.getProductDetails);
 
-// router.get("/", shopController.getIndex);
+router.get("/", shopController.getProducts);
 
 export const shopRoutes = router;

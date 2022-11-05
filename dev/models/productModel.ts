@@ -11,32 +11,54 @@ export class Product {
   price: number;
   imageUrl: string;
   description: string;
-  _id: ObjectId;
-
+  user:string;
+  _id?: ObjectId;
+  
   constructor(
     // id: number,
     title: string,
     price: number,
     imageUrl: string,
     description: string,
-    id:ObjectId
+    user:any,
+    id?:ObjectId,
+    
   ) {
     // this.id = id;
     this.title = title;
     this.price = price;
     this.imageUrl = imageUrl;
     this.description = description;
+    this.user=user._id
     this._id=id;
+    
   }
 
   save() {
     const db = getDb();
+    let dbOp;
     if(this._id){
+      // console.log(this._id+"dassssssssssss");
       
+      dbOp=db
+      .collection("products")
+      .updateOne({_id:new ObjectId(this._id)},{
+        $set: {
+          title: this.title,
+          imageUrl: this.imageUrl,
+          price: +this.price,
+          description: this.description,
+        }
+      })
     }
-    return db
+    else{
+      // console.log(this._id+"dasssssssdsadasssss");heeeeeeeeeeeeeeeeeeeeee
+      
+      dbOp=db
       .collection("products")
       .insertOne(this)
+    }
+    return dbOp
       .then((products: any) => console.log(products))
       .catch((error: any) => console.log(error));
   }
@@ -68,30 +90,12 @@ export class Product {
       .catch((error: any) => console.log(error));
   }
 
-  static update(
-    id: ObjectId,
-    title: string,
-    price: number,
-    imageUrl: string,
-    description: string
-  ) {
+  static delete(id:ObjectId){
     const db = getDb();
-    const filter = {
-      _id: new ObjectId(id)
-    };
-
-    const updateDoc = {
-      $set: {
-        title: title,
-        imageUrl: imageUrl,
-        price: +price,
-        description: description,
-      }
-    };
+    console.log((id));
+    
     return db
-      .collection("products")
-      .updateOne(filter, updateDoc);
-
+      .collection("products").deleteOne({_id: new ObjectId(id)})
   }
 }
 
