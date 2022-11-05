@@ -4,7 +4,7 @@ import { Product } from "../../models/productModel";
 export const getProducts = (_: Request, res: Response) => {
   Product.fetchAllProducts()
     .then((products: string | any[]) => {
-      console.log(products + "heeeeeeeeeeeeeeeeeeeeee");
+
 
       res.render("shop/product-list", {
         prods: products,
@@ -31,28 +31,28 @@ export const getProducts = (_: Request, res: Response) => {
   //   .catch((err) => console.log(err));
 };
 
-export const getCart = (req: Request, res: Response) => {
-  // res.sendFile(path.join(rootDir, "..", "views", "shop.html"));
-  req.user.getCart().then((cart: any) => {
-    console.log(cart);
+// export const getCart = (req: Request, res: Response) => {
+//   // res.sendFile(path.join(rootDir, "..", "views", "shop.html"));
+//   req.user.getCart().then((cart: any) => {
+//     console.log(cart);
 
-    cart
-      .getProducts()
-      .then((products: any) => {
-        res.render("shop/cart", {
-          pageTitle: "Cart",
-          path: "shop/cart",
-          activeShop: true,
-          productCSS: true,
-          products: products,
-        });
-      })
-      .catch((err: any) => {
-        res.redirect("/products");
-        console.log(err);
-      });
-  });
-};
+//     cart
+//       .getProducts()
+//       .then((products: any) => {
+//         res.render("shop/cart", {
+//           pageTitle: "Cart",
+//           path: "shop/cart",
+//           activeShop: true,
+//           productCSS: true,
+//           products: products,
+//         });
+//       })
+//       .catch((err: any) => {
+//         res.redirect("/products");
+//         console.log(err);
+//       });
+//   });
+// };
 
 // export const postCart = (req: Request, res: Response) => {
 
