@@ -76,15 +76,17 @@ export class Product {
       .catch((error: any) => console.log(error));
   }
 
-  static fetchSingleProduct(id: string) {
+  static 
+  fetchSingleProduct(id: string) {
     const db = getDb();
     return db
       .collection("products")
-      .find({
+      .findOne({
         _id: new ObjectId(id)
       })
-      .toArray()
       .then((products: any) => {
+
+        
         return products;
       })
       .catch((error: any) => console.log(error));
@@ -94,6 +96,7 @@ export class Product {
     const db = getDb();
     console.log((id));
     
+  
     return db
       .collection("products").deleteOne({_id: new ObjectId(id)})
   }
