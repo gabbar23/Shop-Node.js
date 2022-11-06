@@ -22,7 +22,9 @@ app.use(express.static(path.join(rootDir, "..", "public")));
 app.use((req, _, next) => {
   User.fetchSingleUser('636638ab3ec69061e730bc30')
     .then((user: any) => {
-      req.user = user;
+
+    
+      req.user = new User(user.name, user.email, user.cart, user._id);
       return next();
     })
     .catch((err: any) => console.log(err));
