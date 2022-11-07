@@ -31,62 +31,54 @@ export const getProducts = (_: Request, res: Response) => {
   //   .catch((err) => console.log(err));
 };
 
-export const getCart = (req: Request, _: Response) => {
+export const getCart = (req: Request, res: Response) => {
   // res.sendFile(path.join(rootDir, "..", "views", "shop.html"));
-  req.user.getCart().then((cart: any) => {
-    console.log(cart);
-  })
+  req.user.getCart().then((products: any) => {
+    res.render("shop/cart", {
+      pageTitle: "Cart",
+      path: "shop/cart",
+      activeShop: true,
+      productCSS: true,
+      products: products,
+    })
+  }
+  ).catch((err: any) => {
+    console.log(err);
+    
+    res.redirect("/products");
+})
+}
 
-  //   cart
-  //     .getProducts()
-  //     .then((products: any) => {
-  //       res.render("shop/cart", {
-  //         pageTitle: "Cart",
-  //         path: "shop/cart",
-  //         activeShop: true,
-  //         productCSS: true,
-  //         products: products,
-  //       });
-  //     })
-  //     .catch((err: any) => {
-  //       res.redirect("/products");
-  //       console.log(err);
-  //     });
-  // });
-};
-
+      
 export const postCart = (req:Request, res:Response) => {
   const prodId = req.body.productId;
-  console.log(prodId);
+
   Product.fetchSingleProduct(prodId.trim())
     .then((product: any) => {
-  console.log(product.title+"post cart"+product.price);
-  
-      
       return req.user.addToCart(product);
     })
-    .then((result: any) => {
-      console.log(result);
+    .then(() => {
+    
       res.redirect('/cart');
     });
   }
 
-// export const postCartDeleteProduct = (req:Request, res:Response) => {
-//   const prodId = req.body.productId;
-//   req.user
-//     .getCart()
-//     .then((cart: { getProducts: (arg0: { where: { id: any; }; }) => any; }) => {
-//       return cart.getProducts({ where: { id: prodId } });
-//     })
-//     .then((products: any[]) => {
-//       const product = products[0];
-//       return product.cartItem.destroy();
-//     })
-//     .then((_: any) => {
-//       res.redirect('/cart');
-//     })
-//     .catch((err: any) => console.log(err));
-// };
+export const postCartDeleteProduct = (req:Request, res:Response) => {
+  const prodId = req.body.productId
+  
+  req.user.deleteCartProduct(prodId).then(()=>res.redirect('/cart')).catch((err: any) => console.log(err));
+    // .then((cart: { getProducts: (arg0: { where: { id: any; }; }) => any; }) => {
+    //   return cart.getProducts({ where: { id: prodId } });
+    // })
+    // .then((products: any[]) => {
+    //   const product = products[0];
+    //   return product.cartItem.destroy();
+    // })
+    // .then((_: any) => {
+    //   res.redirect('/cart');
+    // })
+    // .catch((err: any) => console.log(err));
+};
 
 // export const getorders = (_: Request, res: Response) => {
 //   // res.sendFile(path.join(rootDir, "..", "views", "shop.html"));
@@ -152,6 +144,29 @@ export const postCart = (req:Request, res:Response) => {
 //     productCSS: true,
 //   });
 // };
+
+export const postOrder = (req:Request, res:Response) => {
+
+  req.user
+    .addOrder()
+    .then(() => {
+      res.redirect('/orders');
+    })
+    .catch((err:Error) => console.log(err));
+};
+
+export const getOrders = (req:Request, res:Response) => {
+  req.user
+    .getOrders()
+    .then((orders: any) => {
+      res.render('shop/orders', {
+        path: '/orders',
+        pageTitle: 'Your Orders',
+        orders: orders
+      });
+    })
+    .catch((err:Error) => console.log(err));
+};
 
 export const getProductDetails = (req: Request, res: Response) => {
   const productId = req.params.productId;
