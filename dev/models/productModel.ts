@@ -70,7 +70,7 @@ export class Product {
       .find()
       .toArray()
       .then((products: any) => {
-        console.log(products);
+        
         return products;
       })
       .catch((error: any) => console.log(error));
@@ -94,7 +94,7 @@ export class Product {
 
   static delete(id:ObjectId){
     const db = getDb();
-    console.log((id));
+   
     
   
     return db

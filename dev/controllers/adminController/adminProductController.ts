@@ -16,7 +16,7 @@ export const postAddProduct = (req: Request, res: Response) => {
   const imageUrl = req.body.imageUrl;
   const description = req.body.description;
   const user=req.user;
-  console.log("here in post"+user);
+
   
   const product = new Product(title, price, imageUrl, description,user);
   product.save().then((_: any) => res.redirect("/product-list"));

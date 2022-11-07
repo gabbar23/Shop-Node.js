@@ -9,13 +9,13 @@ router.get("/cart", shopController.getCart);
 
 router.post("/cart", shopController.postCart);
 
-// router.post("/cart-delete-item",shopController.postCartDeleteProduct)
+router.post("/cart-delete-item",shopController.postCartDeleteProduct)
 
 // router.get("/checkout", shopController.getCheckout);
 
-// router.get("/orders", shopController.getorders);
+router.get("/orders", shopController.getOrders);
 
-// router.post("/create-order",shopController.postCreateOrder)
+router.post("/create-order",shopController.postOrder)
 
 router.get("/product-detail/:productId", shopController.getProductDetails);
 
