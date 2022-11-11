@@ -17,16 +17,16 @@ export const getProducts = (_: Request, res: Response) => {
 };
 
 export const getCart = (req: Request, res: Response) => {
-  // res.sendFile(path.join(rootDir, "..", "views", "shop.html"));
   req.user
-    .getCart()
+    .populate("cart.items.productId")
+    // .execPopulate()
     .then((products: any) => {
       res.render("shop/cart", {
         pageTitle: "Cart",
         path: "shop/cart",
         activeShop: true,
         productCSS: true,
-        products: products,
+        products: products.cart.items,
       });
     })
     .catch((err: any) => {
@@ -38,8 +38,7 @@ export const getCart = (req: Request, res: Response) => {
 
 export const postCart = (req: Request, res: Response) => {
   const prodId = req.body.productId;
-
-  Product.findById(prodId)
+  Product.findById(prodId.trim())
     .then((product: any) => {
       return req.user.addToCart(product);
     })
@@ -55,61 +54,50 @@ export const postCartDeleteProduct = (req: Request, res: Response) => {
     .deleteCartProduct(prodId)
     .then(() => res.redirect("/cart"))
     .catch((err: any) => console.log(err));
-  // .then((cart: { getProducts: (arg0: { where: { id: any; }; }) => any; }) => {
-  //   return cart.getProducts({ where: { id: prodId } });
-  // })
-  // .then((products: any[]) => {
-  //   const product = products[0];
-  //   return product.cartItem.destroy();
-  // })
-  // .then((_: any) => {
-  //   res.redirect('/cart');
-  // })
-  // .catch((err: any) => console.log(err));
 };
 
-// export const getorders = (_: Request, res: Response) => {
-//   // res.sendFile(path.join(rootDir, "..", "views", "shop.html"));
+export const getorders = (_: Request, res: Response) => {
+  // res.sendFile(path.join(rootDir, "..", "views", "shop.html"));
 
-//   res.render("shop/orders", {
-//     pageTitle: "Your Orders",
-//     path: "shop/orders",
-//     activeShop: true,
-//     productCSS: true,
-//   });
-// };
+  res.render("shop/orders", {
+    pageTitle: "Your Orders",
+    path: "shop/orders",
+    activeShop: true,
+    productCSS: true,
+  });
+};
 
-// export const postCreateOrder=(req:Request, res:Response) => {
-//   let fetchedCart:any;
-//   req.user
-//     .getCart()
-//     .then((cart:any )=> {
-//       fetchedCart = cart;
-//       return cart.getProducts();
-//     })
-//     .then((products:any) => {
-//       return req.user
-//         .createOrder()
-//         .then((order:any) => {
-//           return order.addProducts(
-//             products.map((product:any) => {
-//               console.log(product.OrderItem+"hiiiiiiiiiiiiiiiii");
+export const postCreateOrder = (req: Request, res: Response) => {
+  let fetchedCart: any;
+  req.user
+    .getCart()
+    .then((cart: any) => {
+      fetchedCart = cart;
+      return cart.getProducts();
+    })
+    .then((products: any) => {
+      return req.user
+        .createOrder()
+        .then((order: any) => {
+          return order.addProducts(
+            products.map((product: any) => {
+              console.log(product.OrderItem + "hiiiiiiiiiiiiiiiii");
 
-//               product.OrderItem = { quantity: product.cartItem.quantity };
-//               return product;
-//             })
-//           );
-//         })
-//         .catch((err: any) => console.log(err));
-//     })
-//     .then(() => {
-//       return fetchedCart.setProducts(null);
-//     })
-//     .then(() => {
-//       res.redirect('/orders');
-//     })
-//     .catch((err: any) => console.log(err));
-// };
+              product.OrderItem = { quantity: product.cartItem.quantity };
+              return product;
+            })
+          );
+        })
+        .catch((err: any) => console.log(err));
+    })
+    .then(() => {
+      return fetchedCart.setProducts(null);
+    })
+    .then(() => {
+      res.redirect("/orders");
+    })
+    .catch((err: any) => console.log(err));
+};
 
 // export const getCheckout = (_: Request, res: Response) => {
 //   // res.sendFile(path.join(rootDir, "..", "views", "shop.html"));

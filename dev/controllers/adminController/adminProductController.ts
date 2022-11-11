@@ -14,13 +14,14 @@ export const postAddProduct = (req: Request, res: Response) => {
   const price = req.body.price;
   const imageUrl = req.body.imageUrl;
   const description = req.body.description;
-  // const user = req.user;
+  const user = req.user;
 
   const product = new Product({
     title: title,
     price: price,
     imageUrl: imageUrl,
     description: description,
+    userId: user._id,
   });
   product.save().then((_: any) => res.redirect("/product-list"));
 };
@@ -31,7 +32,7 @@ export const postEditProduct = (req: Request, res: Response) => {
   const price: number = +req.body.price;
   const description: string = req.body.description;
   const id = req.body.id;
-  // const user = req.user;
+  const user = req.user;
 
   Product.findById(id)
     .then((product: any) => {
@@ -39,6 +40,7 @@ export const postEditProduct = (req: Request, res: Response) => {
       product.imageUrl = imageUrl;
       product.price = price;
       product.description = description;
+      product.userId = user._id;
       return product.save();
     })
     .then(() => res.redirect("/product-list"))
