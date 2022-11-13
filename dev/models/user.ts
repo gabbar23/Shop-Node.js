@@ -60,6 +60,8 @@ UserSchema.methods.deleteCartProduct = function (id: string) {
   return this.save();
 };
 
+UserSchema.methods.addOrder;
+
 export default mongoose.model("users", UserSchema);
 
 // import {ObjectId} from "mongodb";

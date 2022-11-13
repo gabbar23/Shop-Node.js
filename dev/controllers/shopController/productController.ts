@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import Product from "../../models/productModel";
+import Order from "../../models/order";
 
 export const getProducts = (_: Request, res: Response) => {
   Product.find()
@@ -68,35 +69,27 @@ export const getorders = (_: Request, res: Response) => {
 };
 
 export const postCreateOrder = (req: Request, res: Response) => {
-  let fetchedCart: any;
   req.user
-    .getCart()
-    .then((cart: any) => {
-      fetchedCart = cart;
-      return cart.getProducts();
-    })
-    .then((products: any) => {
-      return req.user
-        .createOrder()
-        .then((order: any) => {
-          return order.addProducts(
-            products.map((product: any) => {
-              console.log(product.OrderItem + "hiiiiiiiiiiiiiiiii");
-
-              product.OrderItem = { quantity: product.cartItem.quantity };
-              return product;
-            })
-          );
-        })
-        .catch((err: any) => console.log(err));
-    })
-    .then(() => {
-      return fetchedCart.setProducts(null);
-    })
-    .then(() => {
-      res.redirect("/orders");
-    })
-    .catch((err: any) => console.log(err));
+    .populate("cart.items.productId")
+    // .execPopulate()
+    .then(async (prod: any) => {
+      const products = prod.cart.items.map((prods: any) => {
+        return { products: { ...prods.productId }, quantity: prods.quantity };
+      });
+      const order = new Order({
+        user: {
+          name: req.user.name,
+          userId: req.user._id,
+        },
+        items: products,
+      });
+      try {
+        await order.save();
+        res.redirect("/orders");
+      } catch (err) {
+        return console.log(err);
+      }
+    });
 };
 
 // export const getCheckout = (_: Request, res: Response) => {
@@ -121,26 +114,25 @@ export const postCreateOrder = (req: Request, res: Response) => {
 //   });
 // };
 
-export const postOrder = (req: Request, res: Response) => {
-  req.user
-    .addOrder()
-    .then(() => {
-      res.redirect("/orders");
-    })
-    .catch((err: Error) => console.log(err));
-};
+// export const postOrder = (req: Request, res: Response) => {
+//   req.user
+//     .addOrder()
+//     .then(() => {
+//       res.redirect("/orders");
+//     })
+//     .catch((err: Error) => console.log(err));
+// };
 
 export const getOrders = (req: Request, res: Response) => {
-  req.user
-    .getOrders()
-    .then((orders: any) => {
+  Order.find({ "user.userId": req.user._id })
+    .then((orders) => {
       res.render("shop/orders", {
         path: "/orders",
         pageTitle: "Your Orders",
         orders: orders,
       });
     })
-    .catch((err: Error) => console.log(err));
+    .catch((err) => console.log(err));
 };
 
 export const getProductDetails = (req: Request, res: Response) => {
